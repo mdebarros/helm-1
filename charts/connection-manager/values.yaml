@@ -1,7 +1,8 @@
 api:
+  disabled: false
   image:
     name: ghcr.io/modusbox/connection-manager-api
-    version: 1.8.16
+    version: 1.8.17
   ports:
     containerPort: 3001
     nodePort: 31057
@@ -77,8 +78,8 @@ api:
     serviceAccountNameOverride: null
   rbac:
     enabled: true
-  disabled: false
 ui:
+  disabled: false
   image:
     name: ghcr.io/modusbox/connection-manager-ui
     version: 1.6.16
@@ -157,3 +158,23 @@ config:
       "ST": "test",
       "L": "test"
     }
+
+tests:
+  api:
+    enabled: true
+    weight: -5
+    deletePolicy: before-hook-creation
+    script: 'https://raw.githubusercontent.com/modusbox/connection-manager-api/v{{ .Values.api.image.version }}/scripts/run-functional-tests.sh'
+    git:
+      url: https://github.com/modusbox/connection-manager-api.git
+      tag: 'v{{ .Values.api.image.version }}'
+    targetDirectory: /tmp/tests
+    config:
+      # MCM API URL e.g. http(s)://<host>:<port>/api 
+      appEndpoint: http://connection-manager-api.mcm:3001/api
+      # MCM OAuth Client Key
+      appOauthClientKey: YucabDom6EkGSE3YrdrWab7Qxcga
+      # MCM OAuth Client Secret
+      appOauthClientSecret: nPZERbHlg9jnrUZW83eEyn5yz2Ua
+      # OAuth Issuer URL e.g. https://iskm.local/oauth2/token
+      oauth2Issuer: https://iskm.dev.product.mbox-dev.io/oauth2/token
